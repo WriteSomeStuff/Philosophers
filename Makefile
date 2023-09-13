@@ -1,28 +1,16 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         ::::::::             #
-#    Makefile                                           :+:    :+:             #
-#                                                      +:+                     #
-#    By: cschabra <cschabra@student.codam.nl>         +#+                      #
-#                                                    +#+                       #
-#    Created: 2023/07/05 16:15:02 by cschabra      #+#    #+#                  #
-#    Updated: 2023/07/05 17:06:52 by cschabra      ########   odam.nl          #
-#                                                                              #
-# **************************************************************************** #
-
 NAME= philo
-CFLAGS= -Wall -Wextra -Werror $(HEADERS) #-0fast #-fsanitize=address 
+CFLAGS= -Wall -Wextra -Werror $(HEADERS) #-0fast
 
 HEADERS= -I include
 
-CFILES= test.c
+CFILES= ${shell find src -iname "*.c"}
 
 OBJECTS= $(CFILES:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	@$(CC) -o $(NAME) -lm $(CFLAGS) $(CFILES)
+	@$(CC) -o $(NAME) -pthread $(CFLAGS) $(CFILES)
 
 clean:
 	rm  -f $(OBJECTS)
@@ -32,7 +20,7 @@ fclean: clean
 
 re: fclean all
 
-debug: CFLAGS = -g
+debug: CFLAGS += -g -fsanitize=address
 debug: re
 
 .PHONY: all clean fclean re debug

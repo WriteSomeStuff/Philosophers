@@ -1,0 +1,24 @@
+# MacOS
+.DS_Store
+
+# VSCode
+.vscode
+
+# Debugging
+a.out.dSYM
+philo.dSYM
+
+# Object Files
+*.o
+
+# Experimentation
+experiments
+
+# Notes
+notes.md
+
+# Program
+philo
+a.out
+
+*.a
