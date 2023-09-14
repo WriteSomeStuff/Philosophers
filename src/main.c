@@ -1,8 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/14 16:02:15 by cschabra      #+#    #+#                 */
+/*   Updated: 2023/09/14 16:03:23 by cschabra      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	*ft_funct(void *var)
 {
-	int	i = *(int *)var;
+	int	i;
+
+	i = *(int *)var;
 	printf("%i\n", i);
 	return (NULL);
 }
