@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:10 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/18 17:48:28 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/19 14:47:35 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,10 @@ typedef struct s_input
  */
 typedef struct s_shared_data
 {
-	u_int32_t		forks;
-	pthread_mutex_t	mutex;
+	int32_t			*forks;
+	pthread_mutex_t	lock;
+	t_input			*input;
+	u_int32_t		i;
 }	t_shared_data;
 
 // utilities

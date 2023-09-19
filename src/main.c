@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:15 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/18 18:44:47 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/19 18:16:10 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,86 @@ static bool	ft_check_input(char **argv)
 	return (true);
 }
 
-void	*ft_funct(void *var)
+void	*ft_grab_fork(void *var)
 {
-	long	*id;
+	t_shared_data	*data;
+	t_input			input;
+	size_t			philo;
+	size_t			lastphilo;
 
-	id = (long *)var;
-	printf("philo id: %ld\n", *id);
+	data = (t_shared_data *)var;
+	if (pthread_mutex_lock(&data->lock))
+		return (printf("mutex lock failed"), NULL);
+	input = *data->input;
+	philo = data->i;
+	lastphilo = input.philo_nr;
+	if (philo == lastphilo)
+		data->i = 1;
+	else
+		data->i++;
+	if (pthread_mutex_unlock(&data->lock))
+		return (printf("mutex lock failed"), NULL);
+	if (philo == lastphilo)
+	{
+		if (pthread_mutex_lock(&data->lock))
+			return (printf("mutex lock failed"), NULL);
+		if (data->forks[philo] && data->forks[1])
+		{
+			data->forks[philo] = 0;
+			data->forks[1] = 0;
+			printf("philo%zu has taken a fork\n", philo);
+			printf("philo%zu has taken a fork\n", philo);
+			printf("philo%zu is eating\n", philo);
+		}
+		if (pthread_mutex_unlock(&data->lock))
+			return (printf("mutex lock failed"), NULL);
+		usleep(input.time_to_eat * 1000);
+	}
+	else
+	{
+		if (pthread_mutex_lock(&data->lock))
+			return (printf("mutex lock failed"), NULL);
+		if (data->forks[philo] && data->forks[philo + 1])
+		{
+			data->forks[philo] = 0;
+			data->forks[philo + 1] = 0;
+			printf("philo%zu has taken a fork\n", philo);
+			printf("philo%zu has taken a fork\n", philo);
+			printf("philo%zu is eating\n", philo);
+		}
+		if (pthread_mutex_unlock(&data->lock))
+			return (printf("mutex lock failed"), NULL);
+		usleep(input.time_to_eat * 1000);
+	}
+	if (pthread_mutex_lock(&data->lock))
+		return (printf("mutex lock failed"), NULL);
+	printf("philo%zu is sleeping\n", philo);
+	if (pthread_mutex_unlock(&data->lock))
+		return (printf("mutex lock failed"), NULL);
+	usleep(input.time_to_sleep * 1000);
+	if (pthread_mutex_lock(&data->lock))
+		return (printf("mutex lock failed"), NULL);
+	printf("philo%zu is thinking\n", philo);
+	if (pthread_mutex_unlock(&data->lock))
+		return (printf("mutex lock failed"), NULL);
 	return (NULL);
+}
+
+int32_t	*ft_create_fork_array(u_int32_t philo_nr)
+{
+	int32_t	*fork;
+	size_t	i;
+
+	i = 0;
+	fork = malloc(philo_nr * sizeof(int *));
+	if (!fork)
+		return (0);
+	while (i < philo_nr)
+	{
+		fork[i] = 1;
+		i++;
+	}
+	return (fork);
 }
 
 // when a philo is created, a fork is also spawned. 
@@ -67,38 +140,48 @@ bool	ft_create_philos(t_input *input)
 	pthread_t		*threads;
 	t_shared_data	data;
 	size_t			i;
+	size_t			j;
 
 	i = 0;
-	data.forks = input->philo_nr;
+	j = 0;
+	if (pthread_mutex_init(&data.lock, NULL))
+		return (printf("mutex init failed"), false);
+	data.forks = ft_create_fork_array(input->philo_nr);
+	if (!data.forks)
+		return (printf("create fork array failed"), false);
+	data.input = input;
+	data.i = 1;
 	threads = malloc((input->philo_nr) * sizeof(pthread_t));
 	if (!threads)
-		return (false);
+		return (free(data.forks), printf("threads malloc failed"), false);
 	while (i < input->philo_nr)
 	{
-		if (pthread_create(&threads[i], NULL, &ft_funct, (void *)&threads[i]))
-			return (free(threads), false);
+		if (pthread_create(&threads[i], NULL, &ft_grab_fork, (void *)&data))
+			break ;
 		i++;
 	}
-	i = 0;
-	while (i < input->philo_nr)
+	while (j < i)
 	{
-		if (pthread_join(threads[i], NULL))
+		if (pthread_join(threads[j], NULL))
 			return (free(threads), false);
-		i++;
+		j++;
 	}
+	if (pthread_mutex_destroy(&data.lock))
+		return (printf("mutex destroy failed"), false);
+	free(data.forks);
 	free(threads);
+	if (i < input->philo_nr)
+		return (printf("phtread create failed"), false);
 	return (true);
 }
 
-int32_t	ft_test_time(void)
+size_t	ft_test_time(void)
 {
 	struct timeval	start;
 	struct timeval	end;
-	int32_t			i;
 
 	gettimeofday(&start, NULL);
-	i = 0;
-	sleep(1);
+	usleep(1000000);
 	gettimeofday(&end, NULL);
 	return ((((end.tv_sec - start.tv_sec) * 1000000) + \
 		(end.tv_usec - start.tv_usec)) / 1000);
@@ -106,8 +189,8 @@ int32_t	ft_test_time(void)
 
 int32_t	main(int32_t argc, char **argv)
 {
-	t_input			input;
-	const char		*str = "Try: ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep \
+	t_input		input;
+	const char	*str = "Try: ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep \
 	\n[Optional: number_of_times_each_philo_must_eat]\nNo negatives :)!\n";
 
 	if (argc < 5 || argc > 6 || !ft_check_input(argv))
@@ -127,8 +210,7 @@ int32_t	main(int32_t argc, char **argv)
 		input.to_eat_nr = ft_small_atoi(argv[5]);
 	if (!ft_create_philos(&input))
 		return (EXIT_FAILURE);
-	ft_test_time();
-	int32_t time = ft_test_time();
-	printf("milliseconds passed in test_time: %i\n", time);
+	size_t time = ft_test_time();
+	printf("milliseconds passed in test_time: %zu\n", time);
 	return (EXIT_SUCCESS);
 }
