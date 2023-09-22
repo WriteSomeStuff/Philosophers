@@ -41,11 +41,13 @@
  */
 typedef struct s_input
 {
-	u_int32_t	philo_nr;
-	u_int32_t	time_to_die;
-	u_int32_t	time_to_eat;
-	u_int32_t	time_to_sleep;
-	u_int32_t	to_eat_nr;
+	u_int32_t		philo_nr;
+	u_int32_t		time_to_die;
+	u_int32_t		time_to_eat;
+	u_int32_t		time_to_sleep;
+	u_int32_t		to_eat_nr;
+	struct timeval	start;
+	struct timeval	end;
 }	t_input;
 
 /**
@@ -54,14 +56,25 @@ typedef struct s_input
  */
 typedef struct s_shared_data
 {
-	int32_t			*forks;
-	pthread_mutex_t	lock;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	write;
+	pthread_mutex_t	read;
 	t_input			*input;
-	u_int32_t		i;
+	size_t			id;
 }	t_shared_data;
 
-// utilities
+// mutexes
+void		ft_destroy_mutexes(t_shared_data *data, u_int32_t amount);
+bool		ft_create_mutexes(t_shared_data *data, u_int32_t amount);
+
+// philo's
+bool		ft_create_philos(t_input *input);
+
+// string utilities
 u_int32_t	ft_small_atoi(char *str);
 size_t		ft_strlen(const char *str);
+
+// timestamp utilities
+size_t		ft_return_msec(t_input *input);
 
 #endif
