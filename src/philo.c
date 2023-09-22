@@ -25,29 +25,29 @@ static void	*ft_philo_loop(void *var)
 	dead = false;
 	pthread_mutex_lock(&data->read);
 	input = *data->input;
-	fork1 = data->id - 1;
+	fork1 = data->id;
 	data->id++;
-	pthread_mutex_unlock(&data->read);
 	fork2 = (fork1 + 1) % input.philo_nr;
+	if (data->id == input.philo_nr || (fork1 % 2))
+		ft_lock_n_print(data, (fork1 + 1), "%zu %zu is thinking\n");
+	pthread_mutex_unlock(&data->read);
 	while (1)
 	{
-		if (fork1 % 2 && eaten == 0)
-			ft_lock_n_print(data, fork1, "%zu %zu is thinking\n");
 		if (!pthread_mutex_lock(&data->forks[fork1]) && !pthread_mutex_lock(&data->forks[fork2]))
 		{
 			eaten++;
-			ft_lock_n_print(data, fork1, "%zu %zu has taken a fork\n");
-			ft_lock_n_print(data, fork1, "%zu %zu has taken a fork\n");
-			ft_lock_n_print(data, fork1, "%zu %zu is eating\n");
+			ft_lock_n_print(data, (fork1 + 1), "%zu %zu has taken a fork\n");
+			ft_lock_n_print(data, (fork1 + 1), "%zu %zu has taken a fork\n");
+			ft_lock_n_print(data, (fork1 + 1), "%zu %zu is eating\n");
 			usleep(input.time_to_eat * 1000);
 			pthread_mutex_unlock(&data->forks[fork1]);
 			pthread_mutex_unlock(&data->forks[fork2]);
+			if ((input.to_eat_nr && eaten == input.to_eat_nr) || dead == true)
+				return (NULL);
+			ft_lock_n_print(data, (fork1 + 1), "%zu %zu is sleeping\n");
+			usleep(input.time_to_sleep * 1000);
+			ft_lock_n_print(data, (fork1 + 1), "%zu %zu is thinking\n");
 		}
-		if ((input.to_eat_nr && eaten == input.to_eat_nr) || dead == true)
-			return (NULL);
-		ft_lock_n_print(data, fork1, "%zu %zu is sleeping\n");
-		usleep(input.time_to_sleep * 1000);
-		ft_lock_n_print(data, fork1, "%zu %zu is thinking\n");
 	}
 	return (NULL);
 }
@@ -62,7 +62,7 @@ bool	ft_create_philos(t_input *input)
 	i = 0;
 	j = 0;
 	data.input = input;
-	data.id = 1;
+	data.id = 0;
 	threads = malloc((input->philo_nr) * sizeof(pthread_t));
 	if (!threads)
 		return (printf("threads malloc failed"), false);
