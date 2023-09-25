@@ -23,6 +23,9 @@
 # include <stdbool.h>
 # include <limits.h>
 
+# define WRONGINPUT "Try: ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep \
+	\n[Optional: number_of_times_each_philo_must_eat]\nNo negatives or time_to > 9999 :)!\n"
+
 /**
  * @brief User input given which the program will use. 
  * All time_to variables are in milliseconds.
@@ -39,16 +42,18 @@
  * when a philosopher dies.
  * 
  */
-typedef struct s_input
+typedef struct s_init
 {
 	u_int32_t		philo_nr;
 	u_int32_t		time_to_die;
 	u_int32_t		time_to_eat;
 	u_int32_t		time_to_sleep;
 	u_int32_t		to_eat_nr;
+	u_int64_t		last_meal;
+	void			*philo_died;
 	struct timeval	start;
 	struct timeval	end;
-}	t_input;
+}	t_init;
 
 /**
  * @brief 
@@ -59,7 +64,9 @@ typedef struct s_shared_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
 	pthread_mutex_t	read;
-	t_input			*input;
+	pthread_mutex_t	death;
+	t_init			*info;
+	bool			died;
 	size_t			id;
 }	t_shared_data;
 
@@ -68,13 +75,16 @@ void		ft_destroy_mutexes(t_shared_data *data, u_int32_t amount);
 bool		ft_create_mutexes(t_shared_data *data, u_int32_t amount);
 
 // philo's
-bool		ft_create_philos(t_input *input);
+bool		ft_check_if_dead(t_shared_data *data);
+bool		ft_create_philos(t_init *info);
 
 // string utilities
 u_int32_t	ft_small_atoi(char *str);
 size_t		ft_strlen(const char *str);
 
 // timestamp utilities
-size_t		ft_return_msec(t_input *input);
+u_int64_t	ft_time(void);
+bool		ft_usleep(t_shared_data *data, u_int32_t time);
+u_int64_t	ft_return_msec(t_init *info);
 
 #endif

@@ -23,13 +23,6 @@
 // - A message announcing a philosopher died should be displayed no more than
 // 10 ms after the actual death of the philosopher. Philos should avoid dying.
 
-// Any state change of a philosopher must be formatted as follows:
-//◦ timestamp_in_ms X has taken a fork
-//◦ timestamp_in_ms X is eating
-//◦ timestamp_in_ms X is sleeping
-//◦ timestamp_in_ms X is thinking
-//◦ timestamp_in_ms X died
-
 // still need to decide on a maximum input nr. below 1000? or higher?
 static bool	ft_check_input(char **argv)
 {
@@ -42,7 +35,9 @@ static bool	ft_check_input(char **argv)
 	{
 		while (argv[i][j])
 		{
-			if (argv[i][j] < '0' || argv[i][j] > '9' || ft_strlen(argv[i]) > 5)
+			if (ft_strlen(argv[i]) > 4)
+				return (false);
+			if (argv[i][j] < '0' || argv[i][j] > '9')
 				return (false);
 			j++;
 		}
@@ -54,28 +49,26 @@ static bool	ft_check_input(char **argv)
 
 int32_t	main(int32_t argc, char **argv)
 {
-	t_input		input;
-	const char	*str = "Try: ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep \
-	\n[Optional: number_of_times_each_philo_must_eat]\nNo negatives :)!\n";
+	t_init		init;
 
 	if (argc < 5 || argc > 6 || !ft_check_input(argv))
 	{
-		write(STDERR_FILENO, str, ft_strlen(str));
+		write(STDERR_FILENO, WRONGINPUT, ft_strlen(WRONGINPUT));
 		return (EXIT_FAILURE);
 	}
-	input.philo_nr = ft_small_atoi(argv[1]);
-	if (!input.philo_nr)
-		return (EXIT_SUCCESS);
-	if (input.philo_nr > 800)
+	init.philo_nr = ft_small_atoi(argv[1]);
+	if (init.philo_nr > 800)
 		return (printf("don't you think that's a lot..?"), EXIT_FAILURE);
-	input.time_to_die = ft_small_atoi(argv[2]);
-	input.time_to_eat = ft_small_atoi(argv[3]);
-	input.time_to_sleep = ft_small_atoi(argv[4]);
+	init.time_to_die = ft_small_atoi(argv[2]);
+	init.time_to_eat = ft_small_atoi(argv[3]);
+	init.time_to_sleep = ft_small_atoi(argv[4]);
+	if (!init.philo_nr || !init.time_to_die || !init.time_to_eat || !init.time_to_sleep)
+		return (printf("gib higher than 0 plz"), EXIT_FAILURE);
 	if (argc == 5)
-		input.to_eat_nr = 0;
+		init.to_eat_nr = 0;
 	else
-		input.to_eat_nr = ft_small_atoi(argv[5]);
-	if (!ft_create_philos(&input))
+		init.to_eat_nr = ft_small_atoi(argv[5]);
+	if (!ft_create_philos(&init))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
