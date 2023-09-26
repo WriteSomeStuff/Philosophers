@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:10 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/26 16:04:52 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/26 17:58:34 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ typedef struct s_init
 	void			*philo_died;
 	struct timeval	start;
 	struct timeval	end;
-
 	size_t			fork1;
 	size_t			fork2;
 	size_t			eaten;
 	size_t			this_philo;
+	// size_t			i;
 }	t_init;
 
 /**
@@ -95,12 +95,12 @@ bool			ft_check_if_dead(t_shared_data *data);
 bool			ft_check_starvation(t_shared_data *data, t_init *info);
 bool			ft_lock_n_print(t_shared_data *data, size_t philo, char *str);
 
-// philo's
-bool			ft_create_philos(t_init *info);
-
 // string utilities
 u_int32_t		ft_small_atoi(char *str);
 size_t			ft_strlen(const char *str);
+
+// threads
+bool			ft_prep_threads(t_init *info);
 
 // timestamp utilities
 long long int	ft_time(void);

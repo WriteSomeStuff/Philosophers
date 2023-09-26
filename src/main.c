@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:15 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/26 16:17:56 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/26 17:57:58 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ int32_t	main(int32_t argc, char **argv)
 	else
 		info.max_eat = ft_small_atoi(argv[5]);
 	info.eaten = 0;
-	if (!ft_create_philos(&info))
+	// info.i = 0;
+	if (!ft_prep_threads(&info))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
