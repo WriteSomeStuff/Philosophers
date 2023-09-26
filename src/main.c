@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:15 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/19 18:16:10 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/26 16:17:56 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static bool	ft_check_input(char **argv)
 	{
 		while (argv[i][j])
 		{
-			if (ft_strlen(argv[i]) > 4)
+			if (ft_strlen(argv[i]) > 5)
 				return (false);
 			if (argv[i][j] < '0' || argv[i][j] > '9')
 				return (false);
@@ -49,26 +49,27 @@ static bool	ft_check_input(char **argv)
 
 int32_t	main(int32_t argc, char **argv)
 {
-	t_init		init;
+	t_init	info;
 
 	if (argc < 5 || argc > 6 || !ft_check_input(argv))
 	{
 		write(STDERR_FILENO, WRONGINPUT, ft_strlen(WRONGINPUT));
 		return (EXIT_FAILURE);
 	}
-	init.philo_nr = ft_small_atoi(argv[1]);
-	if (init.philo_nr > 800)
+	info.philo_nr = ft_small_atoi(argv[1]);
+	if (info.philo_nr > 499)
 		return (printf("don't you think that's a lot..?"), EXIT_FAILURE);
-	init.time_to_die = ft_small_atoi(argv[2]);
-	init.time_to_eat = ft_small_atoi(argv[3]);
-	init.time_to_sleep = ft_small_atoi(argv[4]);
-	if (!init.philo_nr || !init.time_to_die || !init.time_to_eat || !init.time_to_sleep)
+	info.time_to_die = ft_small_atoi(argv[2]);
+	info.time_to_eat = ft_small_atoi(argv[3]);
+	info.time_to_sleep = ft_small_atoi(argv[4]);
+	if (!info.philo_nr || !info.time_to_die || !info.time_to_eat || !info.time_to_sleep)
 		return (printf("gib higher than 0 plz"), EXIT_FAILURE);
 	if (argc == 5)
-		init.to_eat_nr = 0;
+		info.max_eat = 0;
 	else
-		init.to_eat_nr = ft_small_atoi(argv[5]);
-	if (!ft_create_philos(&init))
+		info.max_eat = ft_small_atoi(argv[5]);
+	info.eaten = 0;
+	if (!ft_create_philos(&info))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
