@@ -18,7 +18,7 @@ bool	ft_prep_threads(t_init *info)
 	t_shared_data	data;
 	size_t			i;
 	size_t			j;
-	int				temp;
+	size_t			temp;
 
 	temp = 0;
 	i = 0;
@@ -29,11 +29,13 @@ bool	ft_prep_threads(t_init *info)
 	gettimeofday(&info->start, NULL);
 	if (ft_single_philo(info))
 		return (true);
-	threads = malloc((info->philo_nr) * sizeof(pthread_t));
+	threads = malloc(info->philo_nr * sizeof(pthread_t));
 	if (!threads)
 		return (printf("threads malloc failed"), false);
+	if (!ft_int_array(&data, info))
+		return (printf("int array malloc failed"), free(threads), false);
 	if (!ft_create_mutexes(&data, info->philo_nr))
-		return (free(threads), printf("create mutexes failed"), false);
+		return (free(threads), free(data.forks_available), printf("create mutexes failed"), false);
 	info->last_meal = ft_time();
 	while (i < info->philo_nr)
 	{
@@ -47,27 +49,29 @@ bool	ft_prep_threads(t_init *info)
 		{
 			ft_destroy_mutexes(&data, info->philo_nr);
 			free(data.forks);
+			free(data.forks_available);
 			free(threads);
 			return (false);
 		}
-		if (info->philo_died)
+		if (info->philo_died && !temp)
 		{
 			temp = j;
 			gettimeofday(&info->end, NULL);
 		}
 		j++;
 	}
-	if (temp)
-		printf("%lld %d died", ft_return_msec(info), temp + 1);
 	ft_destroy_mutexes(&data, info->philo_nr);
 	free(data.forks);
+	free(data.forks_available);
 	free(threads);
+	if (temp)
+		printf("%lld %lu died\n", ft_return_msec(info), temp + 1);
 	if (i < info->philo_nr)
 		return (printf("phtread create failed"), false);
 	return (true);
 }
 
-// // new funcs that segv
+// new funcs that segv
 // bool	ft_join_threads(t_shared_data *data, t_init *info, pthread_t *threads)
 // {
 // 	size_t	j;

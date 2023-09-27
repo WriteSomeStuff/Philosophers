@@ -12,24 +12,39 @@
 
 #include "philo.h"
 
-bool	ft_eating(t_shared_data *data, t_init *info, size_t fork1, size_t fork2)
+// bool	ft_nom()
+// {
+//		maybe try to pick up 1 fork, check if other fork available, if not, drop fork and return???
+// }
+
+int32_t	ft_eating(t_shared_data *data, t_init *info, size_t fork1, size_t fork2)
 {
-	pthread_mutex_lock(&data->forks[fork1]);
 	pthread_mutex_lock(&data->forks[fork2]);
+	pthread_mutex_lock(&data->forks[fork1]);
+	data->forks_available[info->fork2] = 0;
+	data->forks_available[info->fork1] = 0;
+	info->last_meal = ft_time();
+	if (ft_check_starvation(data, info))
+	{
+		pthread_mutex_unlock(&data->forks[fork1]);
+		pthread_mutex_unlock(&data->forks[fork2]);
+		return (1);
+	}
 	if (!ft_lock_n_print(data, fork1 + 1, "%lld %zu has taken a fork\n") || \
 		!ft_lock_n_print(data, fork1 + 1, "%lld %zu has taken a fork\n") || \
 		!ft_lock_n_print(data, fork1 + 1, "%lld %zu is eating\n") || \
 		!ft_usleep(data, info->time_to_eat))
 	{
-		pthread_mutex_unlock(&data->forks[fork2]);
 		pthread_mutex_unlock(&data->forks[fork1]);
-		return (false);
+		pthread_mutex_unlock(&data->forks[fork2]);
+		return (2);
 	}
-	info->last_meal = ft_time();
 	info->eaten++;
-	pthread_mutex_unlock(&data->forks[fork2]);
+	data->forks_available[info->fork1] = 1;
+	data->forks_available[info->fork2] = 1;
 	pthread_mutex_unlock(&data->forks[fork1]);
-	return (true);
+	pthread_mutex_unlock(&data->forks[fork2]);
+	return (0);
 }
 
 bool	ft_sleeping(t_shared_data *data, t_init *info, size_t fork1)

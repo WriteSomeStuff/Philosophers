@@ -71,8 +71,10 @@ typedef struct s_shared_data
 	pthread_mutex_t	write;
 	pthread_mutex_t	read;
 	pthread_mutex_t	death;
+	pthread_mutex_t	fork_check;
 	t_init			*info;
 	bool			died;
+	int32_t			*forks_available;
 	size_t			id;
 }	t_shared_data;
 
@@ -85,7 +87,7 @@ void			*ft_philo_loop(void *var);
 bool			ft_single_philo(t_init *info);
 
 // philo states
-bool			ft_eating(t_shared_data *data, t_init *info, size_t fork1, \
+int32_t			ft_eating(t_shared_data *data, t_init *info, size_t fork1, \
 	size_t fork2);
 bool			ft_sleeping(t_shared_data *data, t_init *info, size_t fork1);
 bool			ft_thinking(t_shared_data *data, size_t fork1);
@@ -96,6 +98,7 @@ bool			ft_check_starvation(t_shared_data *data, t_init *info);
 bool			ft_lock_n_print(t_shared_data *data, size_t philo, char *str);
 
 // string utilities
+bool			ft_int_array(t_shared_data *data, t_init *info);
 u_int32_t		ft_small_atoi(char *str);
 size_t			ft_strlen(const char *str);
 

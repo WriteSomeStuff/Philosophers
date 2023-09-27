@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-static void	ft_setup_current_philo(t_shared_data *data, t_init *info)
+static bool	ft_setup_current_philo(t_shared_data *data, t_init *info)
 {
 	pthread_mutex_lock(&data->read);
 	*info = *data->info;
@@ -25,21 +25,45 @@ static void	ft_setup_current_philo(t_shared_data *data, t_init *info)
 		ft_lock_n_print(data, info->this_philo + 1, "%lld %zu is thinking\n");
 	if (info->this_philo % 2 || \
 		(info->philo_nr % 2 && info->this_philo == info->philo_nr - 1))
-		ft_usleep(data, info->time_to_eat);
+	{
+		if (info->time_to_die < info->time_to_eat)
+		{
+			if (!ft_usleep(data, info->time_to_die))
+				return (false);
+		}
+		else
+		{
+			if (!ft_usleep(data, info->time_to_eat))
+				return (false);
+		}
+	}
+	return (true);
 }
 
 void	*ft_philo_loop(void *var)
 {
 	t_shared_data	*data;
 	t_init			info;
+	int32_t			check;
 
 	data = (t_shared_data *)var;
-	ft_setup_current_philo(data, &info);
+	if (!ft_setup_current_philo(data, &info))
+		return (NULL);
 	while (1)
 	{
-		if (ft_check_starvation(data, &info))
+		pthread_mutex_lock(&data->fork_check);
+		while (data->forks_available[info.fork2] == 0 || data->forks_available[info.fork1] == 0)
+		{
+			if (ft_check_starvation(data, &info))
+				return (pthread_mutex_unlock(&data->fork_check), "starved");
+			if (!ft_usleep(data, 1))
+				return (pthread_mutex_unlock(&data->fork_check), NULL);
+		}
+		pthread_mutex_unlock(&data->fork_check);
+		check = ft_eating(data, &info, info.fork1, info.fork2);
+		if (check == 1)
 			return ("starved");
-		if (!ft_eating(data, &info, info.fork1, info.fork2))
+		else if (check == 2)
 			break ;
 		if ((info.max_eat && info.eaten == info.max_eat) || \
 			!ft_sleeping(data, &info, info.fork1) || \

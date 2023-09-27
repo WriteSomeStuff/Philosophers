@@ -12,6 +12,22 @@
 
 #include "philo.h"
 
+bool	ft_int_array(t_shared_data *data, t_init *info)
+{
+	size_t	i;
+
+	i = 0;
+	data->forks_available = malloc(info->philo_nr * sizeof(int32_t *));
+	if (!data->forks_available)
+		return (false);
+	while (i < info->philo_nr)
+	{
+		data->forks_available[i] = 1;
+		i++;
+	}
+	return (true);
+}
+
 u_int32_t	ft_small_atoi(char *str)
 {
 	size_t		i;

@@ -47,10 +47,16 @@ static bool	ft_check_input(char **argv)
 	return (true);
 }
 
+void	leaks(void)
+{
+	system("leaks -q philo");
+}
+
 int32_t	main(int32_t argc, char **argv)
 {
 	t_init	info;
 
+	// atexit(leaks);
 	if (argc < 5 || argc > 6 || !ft_check_input(argv))
 	{
 		write(STDERR_FILENO, WRONGINPUT, ft_strlen(WRONGINPUT));
@@ -69,7 +75,6 @@ int32_t	main(int32_t argc, char **argv)
 	else
 		info.max_eat = ft_small_atoi(argv[5]);
 	info.eaten = 0;
-	// info.i = 0;
 	if (!ft_prep_threads(&info))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
