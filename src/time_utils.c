@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 11:55:53 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/26 16:04:36 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/28 14:58:19 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ bool	ft_usleep(t_shared_data *data, u_int32_t ms)
 	return (true);
 }
 
-long long int	ft_return_msec(t_init *info)
+long long int	ft_return_msec(t_shared_data *data)
 {
-	return ((((info->end.tv_sec - info->start.tv_sec) * 1000000) + \
-		(info->end.tv_usec - info->start.tv_usec)) / 1000);
+	return ((((data->end.tv_sec - data->start.tv_sec) * 1000000) + \
+		(data->end.tv_usec - data->start.tv_usec)) / 1000);
 }

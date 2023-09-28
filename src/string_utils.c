@@ -6,23 +6,23 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 15:57:16 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/18 16:05:49 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/28 18:08:30 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-bool	ft_int_array(t_shared_data *data, t_init *info)
+bool	ft_int_array(t_shared_data *data)
 {
 	size_t	i;
 
 	i = 0;
-	data->forks_available = malloc(info->philo_nr * sizeof(int32_t *));
-	if (!data->forks_available)
+	data->done_eating = malloc(data->philo_nr * sizeof(int32_t *));
+	if (!data->done_eating)
 		return (false);
-	while (i < info->philo_nr)
+	while (i < data->philo_nr)
 	{
-		data->forks_available[i] = 1;
+		data->done_eating[i] = 0;
 		i++;
 	}
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:10 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/26 17:58:34 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/28 19:26:32 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@
 # include <stdbool.h>
 # include <limits.h>
 
-# define WRONGINPUT "Try: ./philo number_of_philosophers time_to_die time_to_eat\n \
-	[Optional: number_of_times_each_philo_must_eat]\n \
-	No negatives or time_to > 9999 :)!\n"
+# define WRONGINPUT "Try: ./philo number_of_philosophers time_to_die time_to_eat \
+	\n[Optional: number_of_times_each_philo_must_eat] \
+	\nNo negatives or time_to > 99999 :)!\n"
 
 /**
  * @brief User input given which the program will use. 
@@ -45,38 +45,47 @@
  */
 typedef struct s_init
 {
+	size_t			fork1;
+	size_t			fork2;
+	size_t			eaten;
+	size_t			this_philo;
 	u_int32_t		philo_nr;
 	u_int32_t		time_to_die;
 	u_int32_t		time_to_eat;
 	u_int32_t		time_to_sleep;
 	u_int32_t		max_eat;
 	long long int	last_meal;
-	void			*philo_died;
-	struct timeval	start;
-	struct timeval	end;
-	size_t			fork1;
-	size_t			fork2;
-	size_t			eaten;
-	size_t			this_philo;
-	// size_t			i;
 }	t_init;
 
-/**
- * @brief 
- * 
- */
 typedef struct s_shared_data
 {
+	size_t			this_philo;
+	u_int32_t		philo_nr;
+	u_int32_t		time_to_die;
+	u_int32_t		time_to_eat;
+	u_int32_t		time_to_sleep;
+	u_int32_t		max_eat;
+	long long int	last_meal;
+	size_t			id;
+	size_t			philo_died;
+	int32_t			*done_eating;
+	bool			died;
+	bool			full;
+	struct timeval	start;
+	struct timeval	end;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
 	pthread_mutex_t	read;
-	pthread_mutex_t	death;
 	pthread_mutex_t	fork_check;
-	t_init			*info;
-	bool			died;
-	int32_t			*forks_available;
-	size_t			id;
+	pthread_mutex_t	stop_lock;
 }	t_shared_data;
+
+typedef struct s_counters
+{
+	size_t	i;
+	size_t	j;
+	size_t	temp;
+}	t_counters;
 
 // mutexes
 void			ft_destroy_mutexes(t_shared_data *data, u_int32_t amount);
@@ -84,30 +93,29 @@ bool			ft_create_mutexes(t_shared_data *data, u_int32_t amount);
 
 // philo active
 void			*ft_philo_loop(void *var);
-bool			ft_single_philo(t_init *info);
 
 // philo states
-int32_t			ft_eating(t_shared_data *data, t_init *info, size_t fork1, \
+bool			ft_eating(t_shared_data *data, t_init *info, size_t fork1, \
 	size_t fork2);
 bool			ft_sleeping(t_shared_data *data, t_init *info, size_t fork1);
 bool			ft_thinking(t_shared_data *data, size_t fork1);
 
-// philo utils
+// philo utilities
 bool			ft_check_if_dead(t_shared_data *data);
 bool			ft_check_starvation(t_shared_data *data, t_init *info);
-bool			ft_lock_n_print(t_shared_data *data, size_t philo, char *str);
+bool			ft_print(t_shared_data *data, size_t philo, char *str);
 
 // string utilities
-bool			ft_int_array(t_shared_data *data, t_init *info);
+bool			ft_int_array(t_shared_data *data);
 u_int32_t		ft_small_atoi(char *str);
 size_t			ft_strlen(const char *str);
 
 // threads
-bool			ft_prep_threads(t_init *info);
+bool			ft_prep_threads(t_shared_data *data);
 
-// timestamp utilities
+// time utilities
 long long int	ft_time(void);
 bool			ft_usleep(t_shared_data *data, u_int32_t time);
-long long int	ft_return_msec(t_init *info);
+long long int	ft_return_msec(t_shared_data *data);
 
 #endif
