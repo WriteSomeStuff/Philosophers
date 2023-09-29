@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:10 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/28 19:26:32 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/29 16:30:10 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ typedef struct s_shared_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
 	pthread_mutex_t	read;
-	pthread_mutex_t	fork_check;
 	pthread_mutex_t	stop_lock;
 }	t_shared_data;
 
