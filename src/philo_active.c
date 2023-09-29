@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 15:02:00 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/28 19:24:17 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/29 14:22:46 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ static bool	ft_single_philo(t_shared_data *data, t_init *info)
 	if (data->philo_nr == 1)
 	{
 		pthread_mutex_lock(&data->forks[0]);
+		ft_print(data, info->this_philo + 1, "%lld %zu has taken a fork\n");
 		ft_usleep(data, data->time_to_die);
 		pthread_mutex_unlock(&data->forks[0]);
 		ft_check_starvation(data, info);
@@ -49,7 +50,8 @@ static bool	ft_setup_current_philo(t_shared_data *data, t_init *info)
 	pthread_mutex_unlock(&data->read);
 	if (info->this_philo == info->philo_nr - 1 || info->this_philo % 2)
 		ft_print(data, info->this_philo + 1, "%lld %zu is thinking\n");
-	if (info->this_philo % 2)
+	if (info->this_philo % 2 || \
+		(info->philo_nr % 2 && info->this_philo == info->philo_nr - 1))
 	{
 		if (info->time_to_die < info->time_to_eat)
 		{

@@ -6,7 +6,7 @@
 #    By: cschabra <cschabra@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/09/14 16:03:51 by cschabra      #+#    #+#                  #
-#    Updated: 2023/09/28 19:28:00 by cschabra      ########   odam.nl          #
+#    Updated: 2023/09/29 14:52:23 by cschabra      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ fclean: clean
 
 re: fclean all
 
-debug: CFLAGS += -g -fsanitize=address #-fsanitize=thread
+debug: CFLAGS += -g #-fsanitize=thread -fsanitize=address
 debug: re
 
 .PHONY: all clean fclean re debug
