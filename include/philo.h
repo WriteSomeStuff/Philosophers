@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:10 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/29 16:30:10 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/29 19:54:10 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ typedef struct s_init
 	u_int32_t		time_to_eat;
 	u_int32_t		time_to_sleep;
 	u_int32_t		max_eat;
-	long long int	last_meal;
 }	t_init;
 
 typedef struct s_shared_data
@@ -65,7 +64,7 @@ typedef struct s_shared_data
 	u_int32_t		time_to_eat;
 	u_int32_t		time_to_sleep;
 	u_int32_t		max_eat;
-	long long int	last_meal;
+	int64_t			*last_meal;
 	size_t			id;
 	size_t			philo_died;
 	int32_t			*done_eating;
@@ -86,35 +85,39 @@ typedef struct s_counters
 	size_t	temp;
 }	t_counters;
 
+// checker
+void		ft_checker(t_shared_data *data, u_int32_t die_time);
+
 // mutexes
-void			ft_destroy_mutexes(t_shared_data *data, u_int32_t amount);
-bool			ft_create_mutexes(t_shared_data *data, u_int32_t amount);
+void		ft_destroy_mutexes(t_shared_data *data, u_int32_t amount);
+bool		ft_create_mutexes(t_shared_data *data, u_int32_t amount);
 
 // philo active
-void			*ft_philo_loop(void *var);
+void		*ft_philo_loop(void *var);
 
 // philo states
-bool			ft_eating(t_shared_data *data, t_init *info, size_t fork1, \
+bool		ft_eating(t_shared_data *data, t_init *info, size_t fork1, \
 	size_t fork2);
-bool			ft_sleeping(t_shared_data *data, t_init *info, size_t fork1);
-bool			ft_thinking(t_shared_data *data, size_t fork1);
+bool		ft_sleeping(t_shared_data *data, t_init *info, size_t fork1);
+bool		ft_thinking(t_shared_data *data, size_t fork1);
 
 // philo utilities
-bool			ft_check_if_dead(t_shared_data *data);
-bool			ft_check_starvation(t_shared_data *data, t_init *info);
-bool			ft_print(t_shared_data *data, size_t philo, char *str);
+bool		ft_check_if_dead(t_shared_data *data);
+// bool		ft_check_starvation(t_shared_data *data, t_init *info);
+bool		ft_print(t_shared_data *data, size_t philo, char *str);
 
 // string utilities
-bool			ft_int_array(t_shared_data *data);
-u_int32_t		ft_small_atoi(char *str);
-size_t			ft_strlen(const char *str);
+bool		ft_death_array(t_shared_data *data);
+bool		ft_full_array(t_shared_data *data);
+u_int32_t	ft_small_atoi(char *str);
+size_t		ft_strlen(const char *str);
 
 // threads
-bool			ft_prep_threads(t_shared_data *data);
+bool		ft_prep_threads(t_shared_data *data);
 
 // time utilities
-long long int	ft_time(void);
-bool			ft_usleep(t_shared_data *data, u_int32_t time);
-long long int	ft_return_msec(t_shared_data *data);
+int64_t		ft_time(void);
+bool		ft_usleep(t_shared_data *data, u_int32_t time);
+int64_t		ft_return_msec(t_shared_data *data);
 
 #endif

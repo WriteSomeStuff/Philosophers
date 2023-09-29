@@ -6,53 +6,11 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 11:55:49 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/28 19:26:07 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/29 20:03:58 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static bool	ft_all_full(t_shared_data *data)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < data->philo_nr)
-	{
-		if (!data->done_eating[i])
-			return (false);
-		i++;
-	}
-	data->full = true;
-	return (true);
-}
-
-static void	ft_checker(t_shared_data *data)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&data->stop_lock);
-		if (data->died == true)
-		{
-			pthread_mutex_lock(&data->write);
-			gettimeofday(&data->end, NULL);
-			printf("%lld %zu died\n", ft_return_msec(data), data->philo_died);
-			pthread_mutex_unlock(&data->write);
-			pthread_mutex_unlock(&data->stop_lock);
-			break ;
-		}
-		else
-		{
-			if (ft_all_full(data))
-			{
-				pthread_mutex_unlock(&data->stop_lock);
-				break ;
-			}
-		}
-		pthread_mutex_unlock(&data->stop_lock);
-		usleep(1000);
-	}
-}
 
 static bool	ft_join_threads(t_shared_data *data, t_counters *count, \
 	pthread_t *threads)
@@ -66,6 +24,7 @@ static bool	ft_join_threads(t_shared_data *data, t_counters *count, \
 			free(data->forks);
 			free(data->done_eating);
 			free(threads);
+			free(data->last_meal);
 			return (false);
 		}
 		count->j++;
@@ -76,11 +35,16 @@ static bool	ft_join_threads(t_shared_data *data, t_counters *count, \
 static bool	ft_create_treads(t_shared_data *data, t_counters *count, \
 	pthread_t *threads)
 {
+	u_int32_t	die_time;
+
+	die_time = data->time_to_die;
 	count->i = 0;
+	if (!ft_death_array(data))
+		return (free(threads), free(data->done_eating), \
+			printf("death array failed"), false);
 	if (!ft_create_mutexes(data, data->philo_nr))
 		return (free(threads), free(data->done_eating), \
-			printf("create mutex failed"), false);
-	data->last_meal = ft_time();
+			free(data->last_meal), printf("create mutex failed"), false);
 	while (count->i < count->temp)
 	{
 		if (pthread_create(&threads[count->i], NULL, \
@@ -88,7 +52,7 @@ static bool	ft_create_treads(t_shared_data *data, t_counters *count, \
 			break ;
 		count->i++;
 	}
-	ft_checker(data);
+	ft_checker(data, die_time);
 	return (true);
 }
 
@@ -105,7 +69,7 @@ bool	ft_prep_threads(t_shared_data *data)
 	threads = malloc(data->philo_nr * sizeof(pthread_t));
 	if (!threads)
 		return (printf("threads malloc failed"), false);
-	if (!ft_int_array(data))
+	if (!ft_full_array(data))
 		return (printf("int array malloc failed"), free(threads), false);
 	if (!ft_create_treads(data, &count, threads) || \
 		!ft_join_threads(data, &count, threads))
@@ -114,6 +78,7 @@ bool	ft_prep_threads(t_shared_data *data)
 	free(data->forks);
 	free(data->done_eating);
 	free(threads);
+	free(data->last_meal);
 	if (count.i < data->philo_nr)
 		return (printf("phtread create failed"), false);
 	return (true);

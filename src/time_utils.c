@@ -6,13 +6,13 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 11:55:53 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/29 14:23:13 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/29 18:44:39 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long long int	ft_time(void)
+int64_t	ft_time(void)
 {
 	struct timeval	time;
 
@@ -22,7 +22,7 @@ long long int	ft_time(void)
 
 bool	ft_usleep(t_shared_data *data, u_int32_t ms)
 {
-	long long int	start;
+	int64_t	start;
 
 	start = ft_time();
 	while ((ft_time() - start) <= ms)
@@ -34,7 +34,7 @@ bool	ft_usleep(t_shared_data *data, u_int32_t ms)
 	return (true);
 }
 
-long long int	ft_return_msec(t_shared_data *data)
+int64_t	ft_return_msec(t_shared_data *data)
 {
 	return ((((data->end.tv_sec - data->start.tv_sec) * 1000000) + \
 		(data->end.tv_usec - data->start.tv_usec)) / 1000);

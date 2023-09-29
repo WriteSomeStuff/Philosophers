@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 15:02:00 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/29 14:22:46 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/29 20:02:25 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static void	ft_copy_data(t_shared_data *data, t_init *info)
 	info->fork1 = info->this_philo;
 	info->fork2 = (info->fork1 + 1) % info->philo_nr;
 	info->eaten = 0;
-	info->last_meal = data->last_meal;
 	data->id++;
 }
 
@@ -32,10 +31,10 @@ static bool	ft_single_philo(t_shared_data *data, t_init *info)
 	if (data->philo_nr == 1)
 	{
 		pthread_mutex_lock(&data->forks[0]);
-		ft_print(data, info->this_philo + 1, "%lld %zu has taken a fork\n");
+		ft_print(data, info->this_philo + 1, "%ld %zu has taken a fork\n");
 		ft_usleep(data, data->time_to_die);
 		pthread_mutex_unlock(&data->forks[0]);
-		ft_check_starvation(data, info);
+		ft_check_if_dead(data);
 		return (true);
 	}
 	return (false);
@@ -49,7 +48,7 @@ static bool	ft_setup_current_philo(t_shared_data *data, t_init *info)
 		return (pthread_mutex_unlock(&data->read), false);
 	pthread_mutex_unlock(&data->read);
 	if (info->this_philo == info->philo_nr - 1 || info->this_philo % 2)
-		ft_print(data, info->this_philo + 1, "%lld %zu is thinking\n");
+		ft_print(data, info->this_philo + 1, "%ld %zu is thinking\n");
 	if (info->this_philo % 2 || \
 		(info->philo_nr % 2 && info->this_philo == info->philo_nr - 1))
 	{
@@ -75,10 +74,8 @@ void	*ft_philo_loop(void *var)
 	data = (t_shared_data *)var;
 	if (!ft_setup_current_philo(data, &info))
 		return (NULL);
-	while (1)
+	while (!ft_check_if_dead(data))
 	{
-		if (ft_check_starvation(data, &info))
-			return (NULL);
 		if (!ft_eating(data, &info, info.fork1, info.fork2))
 			break ;
 		if (!ft_sleeping(data, &info, info.fork1) || \

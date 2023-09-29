@@ -6,13 +6,29 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 15:57:16 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/28 18:08:30 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/09/29 19:44:18 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-bool	ft_int_array(t_shared_data *data)
+bool	ft_death_array(t_shared_data *data)
+{
+	size_t	i;
+
+	i = 0;
+	data->last_meal = malloc(data->philo_nr * sizeof(int64_t *));
+	if (!data->last_meal)
+		return (false);
+	while (i < data->philo_nr)
+	{
+		data->last_meal[i] = ft_time();
+		i++;
+	}
+	return (true);
+}
+
+bool	ft_full_array(t_shared_data *data)
 {
 	size_t	i;
 

@@ -6,12 +6,12 @@
 #    By: cschabra <cschabra@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/09/14 16:03:51 by cschabra      #+#    #+#                  #
-#    Updated: 2023/09/29 14:52:23 by cschabra      ########   odam.nl          #
+#    Updated: 2023/09/29 18:46:50 by cschabra      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME= philo
-CFLAGS= -Wall -Wextra -Werror $(HEADERS) #-0fast
+CFLAGS= -Wall -Wextra -Werror $(HEADERS) #-0fast -flto
 
 HEADERS= -I include
 
