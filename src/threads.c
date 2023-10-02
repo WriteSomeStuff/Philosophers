@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 11:55:49 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/10/02 17:21:20 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/02 19:26:48 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ static bool	ft_create_treads(t_shared_data *data, t_counters *count, \
 			break ;
 		count->i++;
 	}
-	ft_checker(data, die_time);
+	if (count->i > 0)
+		ft_checker(data, die_time);
 	return (true);
 }
 
