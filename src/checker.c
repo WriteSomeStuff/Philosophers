@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/29 19:53:15 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/29 20:05:56 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/02 17:35:58 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@ static bool	ft_all_alive(t_shared_data *data, u_int32_t die_time)
 	int64_t	time;
 
 	i = 0;
-	while (i < data->philo_nr) // lock philo_nr? is copied in all threads but is only ever read and not written to..
+	while (i < data->philo_nr)
 	{
-		time = ft_time() - data->last_meal[i];
-		if (time >= die_time)
+		time = ft_time(data);
+		if (!time)
+			return (false);
+		if (time - data->last_meal[i] >= die_time)
 		{
 			data->died = true;
 			data->philo_died = i + 1;
@@ -55,8 +57,10 @@ void	ft_checker(t_shared_data *data, u_int32_t die_time)
 		if (!ft_all_alive(data, die_time))
 		{
 			pthread_mutex_lock(&data->write);
-			gettimeofday(&data->end, NULL);
-			printf("%ld %zu died\n", ft_return_msec(data), data->philo_died);
+			if (gettimeofday(&data->end, NULL) == 0)
+				printf("%ld %zu died\n", ft_return_ms(data), data->philo_died);
+			else
+				printf("time failed in checker");
 			pthread_mutex_unlock(&data->write);
 			pthread_mutex_unlock(&data->stop_lock);
 			break ;

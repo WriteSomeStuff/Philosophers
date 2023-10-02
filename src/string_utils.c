@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 15:57:16 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/29 19:44:18 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/02 17:38:19 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ bool	ft_death_array(t_shared_data *data)
 		return (false);
 	while (i < data->philo_nr)
 	{
-		data->last_meal[i] = ft_time();
+		data->last_meal[i] = ft_time(data);
+		if (!data->last_meal[i])
+			return (free(data->last_meal), false);
 		i++;
 	}
 	return (true);

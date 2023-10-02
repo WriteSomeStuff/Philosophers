@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/14 16:02:10 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/29 19:54:10 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/02 17:34:08 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ bool		ft_thinking(t_shared_data *data, size_t fork1);
 
 // philo utilities
 bool		ft_check_if_dead(t_shared_data *data);
-// bool		ft_check_starvation(t_shared_data *data, t_init *info);
 bool		ft_print(t_shared_data *data, size_t philo, char *str);
 
 // string utilities
@@ -116,8 +115,8 @@ size_t		ft_strlen(const char *str);
 bool		ft_prep_threads(t_shared_data *data);
 
 // time utilities
-int64_t		ft_time(void);
+int64_t		ft_time(t_shared_data *data);
 bool		ft_usleep(t_shared_data *data, u_int32_t time);
-int64_t		ft_return_msec(t_shared_data *data);
+int64_t		ft_return_ms(t_shared_data *data);
 
 #endif

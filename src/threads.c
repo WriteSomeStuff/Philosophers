@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 11:55:49 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/09/29 20:03:58 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/02 17:21:20 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,9 @@ bool	ft_prep_threads(t_shared_data *data)
 	data->id = 0;
 	data->died = false;
 	data->full = false;
-	gettimeofday(&data->start, NULL);
 	threads = malloc(data->philo_nr * sizeof(pthread_t));
-	if (!threads)
-		return (printf("threads malloc failed"), false);
+	if (!threads || gettimeofday(&data->start, NULL) == -1)
+		return (printf("malloc or time failed"), false);
 	if (!ft_full_array(data))
 		return (printf("int array malloc failed"), free(threads), false);
 	if (!ft_create_treads(data, &count, threads) || \
