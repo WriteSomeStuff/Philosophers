@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 11:55:53 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/10/02 17:35:12 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/03 15:50:58 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	ft_usleep(t_shared_data *data, u_int32_t ms)
 	start = ft_time(data);
 	if (!start)
 		return (false);
-	while ((ft_time(data) - start) <= ms)
+	while ((ft_time(data) - start) < ms)
 	{
 		if (ft_check_if_dead(data))
 			return (false);
