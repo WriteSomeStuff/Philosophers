@@ -11,7 +11,7 @@ make
 ```
 You should see a file called philo after make succeeded.
 
-example: ./philo 5 800 200 200 7
+example input: ./philo 5 800 200 200 7
 
 ◦ nr_of_philosophers: The number of philosophers and also the number of forks.
 
