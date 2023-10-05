@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/29 19:53:15 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/10/02 17:35:58 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/05 19:25:31 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static bool	ft_all_alive(t_shared_data *data, u_int32_t die_time)
 		time = ft_time(data);
 		if (!time)
 			return (false);
-		if (time - data->last_meal[i] >= die_time)
+		if (time - data->last_meal[i] > die_time)
 		{
 			data->died = true;
 			data->philo_died = i + 1;

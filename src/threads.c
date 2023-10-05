@@ -6,7 +6,7 @@
 /*   By: cschabra <cschabra@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/26 11:55:49 by cschabra      #+#    #+#                 */
-/*   Updated: 2023/10/02 19:26:48 by cschabra      ########   odam.nl         */
+/*   Updated: 2023/10/05 19:24:38 by cschabra      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ static bool	ft_create_treads(t_shared_data *data, t_counters *count, \
 	if (!ft_death_array(data))
 		return (free(threads), free(data->done_eating), \
 			printf("death array failed"), false);
-	if (!ft_create_mutexes(data, data->philo_nr))
+	if (!ft_create_mutexes(data, data->philo_nr) || \
+		gettimeofday(&data->start, NULL) == -1)
 		return (free(threads), free(data->done_eating), \
 			free(data->last_meal), printf("create mutex failed"), false);
 	while (count->i < count->temp)
@@ -67,7 +68,7 @@ bool	ft_prep_threads(t_shared_data *data)
 	data->died = false;
 	data->full = false;
 	threads = malloc(data->philo_nr * sizeof(pthread_t));
-	if (!threads || gettimeofday(&data->start, NULL) == -1)
+	if (!threads)
 		return (printf("malloc or time failed"), false);
 	if (!ft_full_array(data))
 		return (printf("int array malloc failed"), free(threads), false);
